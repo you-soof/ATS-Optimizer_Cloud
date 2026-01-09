@@ -1,0 +1,37 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/ats-repo/ats-optimizer:$COMMIT_SHA",
+        ".",
+      ]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/ats-repo/ats-optimizer:$COMMIT_SHA",
+      ]
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud run deploy ats-optimizer \
+          --image us-central1-docker.pkg.dev/$PROJECT_ID/ats-repo/ats-optimizer:$COMMIT_SHA \
+          --region=us-central1 \
+          --platform=managed \
+          --allow-unauthenticated \
+          --set-env-vars PORT=8080
+
+images:
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/ats-repo/ats-optimizer:$COMMIT_SHA"
+
+options:
+  substitutionOption: ALLOW_LOOSE
+
+substitutions:
+  _COMMIT_SHA: "latest"
