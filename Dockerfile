@@ -20,5 +20,5 @@ COPY . .
 EXPOSE 8080
 ENV PORT=8080
 
-# Run with gunicorn for production
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080", "app.main:app"]
+# Command to run the application with Uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
