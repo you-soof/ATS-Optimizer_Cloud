@@ -1,7 +1,7 @@
 # ATS-Optimizer 🏠⚡
 
 **Adaptive Thermal-Storage & Heat Pump Optimizer for Nordic Buildings**
-
+***Note: Kindly check the master branch for the full code***
 ATS-Optimizer is a smart energy management backend service that optimizes heat pump operation in Finland by leveraging:
 - 📊 Real-time electricity prices (ENTSO-E)
 - 🌡️ Weather forecasts (Open-Meteo)
