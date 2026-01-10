@@ -61,13 +61,20 @@ app = FastAPI(
 #     allow_headers=["*"],
 # )
 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=[
+        "https://ats-optimizer-cloud.vercel.app",
+        "http://localhost:8081",  # Your local Vite dev server
+        "http://localhost:3000",
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 
 # ============================================================================
