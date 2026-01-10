@@ -1,3 +1,4 @@
+
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
@@ -8,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 # Get database configuration from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
-CLOUD_SQL_CONNECTION_NAME = os.getenv("CLOUD_SQL_CONNECTION_NAME")  # Format: project:region:instance
+CLOUD_SQL_CONNECTION_NAME = os.getenv("CLOUD_SQL_CONNECTION_NAME")
 
 def get_database_url():
     """
@@ -55,7 +56,7 @@ if db_url.startswith("sqlite"):
         db_url,
         connect_args={"check_same_thread": False},
         pool_pre_ping=True,
-        echo=True,  # Set to False in production
+        echo=False,
     )
 else:
     # MySQL/PostgreSQL configuration
@@ -68,7 +69,7 @@ else:
         connect_args={
             "connect_timeout": 10,
         },
-        echo=False,  # Set to True for SQL debugging
+        echo=False,
     )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -85,16 +86,17 @@ def get_db() -> Generator[Session, None, None]:
 
 def init_db():
     """Initialize database tables"""
-    from app.models import Base
-    
     try:
+        # Import Base from models to create all tables
+        from app.models import Base
+        
         logger.info("Initializing database tables...")
         Base.metadata.create_all(bind=engine)
         logger.info("✓ Database tables initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to initialize database: {e}")
-        raise
-
+        logger.error(f"Failed to initialize database: {e}", exc_info=True)
+        # Don't raise - allow app to start even if DB init fails
+        logger.warning("Continuing without database initialization...")
 # import os
 # from sqlalchemy import create_engine
 # from sqlalchemy.orm import sessionmaker, Session
