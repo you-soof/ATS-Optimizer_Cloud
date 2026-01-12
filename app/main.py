@@ -43,6 +43,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup Logic
+    logger.info("Starting ATS-Optimizer API...")
+    try:
+        # If init_db() hangs here, Cloud Run will fail to start.
+        # Ensure your DATABASE_URL is reachable from Cloud Run.
+        init_db()
+        logger.info("✓ Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Critical failure during database init: {e}")
+        # On Cloud Run, it's often better to let the app start but 
+        # return 500s later than to crash the container immediately
+    
+    yield
+    # Shutdown logic (if any)
+    logger.info("Shutting down ATS-Optimizer API...")
+
 # Create FastAPI app
 app = FastAPI(
     title="ATS-Optimizer API",
@@ -50,7 +68,9 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,13 +85,6 @@ app.add_middleware(
 # ============================================================================
 # Startup/Shutdown Events
 # ============================================================================
-
-
-@app.on_event("startup")
-async def startup_event():
-    logger.info("Starting ATS-Optimizer API...")
-    init_db()  # FAIL FAST if DB is wrong
-    logger.info("✓ ATS-Optimizer API ready")
 
 
 @app.get("/health")
