@@ -62,21 +62,21 @@ class Device(Base):
     __tablename__ = "devices"
 
     id = Column(Integer, primary_key=True, index=True)
-    device_id = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, nullable=False)
+    device_id = Column(String(255), unique=True, index=True, nullable=False)
+    name = Column(String(255), nullable=False)
 
     # Location
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
 
     # Building characteristics
-    insulation_level = Column(String, nullable=False)
+    insulation_level = Column(String(255), nullable=False)
     floor_area = Column(Float, nullable=False)  # m²
     volume = Column(Float, nullable=False)  # m³
     thermal_mass = Column(Float, default=50000.0)  # J/K (heat capacity)
 
     # Heat pump specs
-    heat_pump_type = Column(String, nullable=False)
+    heat_pump_type = Column(String(255), nullable=False)
     rated_power = Column(Float, nullable=False)  # kW
     cop_rating = Column(Float, default=3.5)  # Coefficient of Performance
 
@@ -107,7 +107,7 @@ class Measurement(Base):
     indoor_temp = Column(Float, nullable=False)  # °C
     outdoor_temp = Column(Float)  # °C
     power_consumption = Column(Float)  # kW
-    heat_pump_mode = Column(String)
+    heat_pump_mode = Column(String(32))
 
     device = relationship("Device", back_populates="measurements")
 
@@ -120,7 +120,7 @@ class PriceData(Base):
     id = Column(Integer, primary_key=True, index=True)
     timestamp = Column(DateTime, nullable=False, index=True)
     price = Column(Float, nullable=False)  # EUR/MWh
-    area = Column(String, default="FI")
+    area = Column(String(16), default="FI")
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -148,7 +148,7 @@ class GridStatus(Base):
     timestamp = Column(DateTime, nullable=False, index=True)
     wind_power_percentage = Column(Float)  # % of total production
     frequency = Column(Float)  # Hz
-    stress_level = Column(String)  # "normal", "warning", "critical"
+    stress_level = Column(String(16))  # "normal", "warning", "critical"
     maintenance_events = Column(JSON)
 
 
