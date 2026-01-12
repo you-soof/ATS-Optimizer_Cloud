@@ -54,10 +54,12 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['https://ats-optimizer-cloud.vercel.app'],
+    allow_origins=[
+        "https://ats-optimizer-cloud.vercel.app",
+    ],
     allow_credentials=True,
-    allow_methods=["GET", "POST"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_methods=["*"],   # MUST include OPTIONS
+    allow_headers=["*"],
 )
 
 # ============================================================================
