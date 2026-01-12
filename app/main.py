@@ -69,18 +69,16 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database and connections on startup"""
     logger.info("Starting ATS-Optimizer API...")
-    init_db()
+    init_db()  # FAIL FAST if DB is wrong
     logger.info("✓ ATS-Optimizer API ready")
 
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
     return {
         "status": "healthy",
-        "timestamp": datetime.now(),
+        "timestamp": datetime.utcnow(),
         "service": "ATS-Optimizer",
     }
 
