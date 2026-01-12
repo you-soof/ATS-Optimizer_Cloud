@@ -16,9 +16,13 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 # Copy application code
 COPY . .
 
+# Copy and set permissions for entrypoint script
+COPY init_db_entrypoint.sh /app/init_db_entrypoint.sh
+RUN chmod +x /app/init_db_entrypoint.sh
+
 # Expose port
 EXPOSE 8080
 ENV PORT=8080
 
-# Command to run the application with Uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Use entrypoint script that initializes DB before starting the app
+CMD ["/app/init_db_entrypoint.sh"]

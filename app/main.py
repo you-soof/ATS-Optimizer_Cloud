@@ -50,10 +50,12 @@ async def lifespan(app: FastAPI):
     try:
         # If init_db() hangs here, Cloud Run will fail to start.
         # Ensure your DATABASE_URL is reachable from Cloud Run.
+        logger.info("Attempting to initialize database tables...")
         init_db()
         logger.info("✓ Database initialized successfully")
     except Exception as e:
-        logger.error(f"Critical failure during database init: {e}")
+        logger.error(f"✗ Critical failure during database init: {e}", exc_info=True)
+        logger.error("Database tables may not exist. Run init_db_entrypoint.sh or tmp_rovodev_init_db.py manually.")
         # On Cloud Run, it's often better to let the app start but 
         # return 500s later than to crash the container immediately
     
