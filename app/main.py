@@ -527,7 +527,17 @@ async def get_current_action(device_id: str, db: Session = Depends(get_db)):
     }
 
 
+# main.py  (ONLY CHANGE THIS PART AT THE BOTTOM)
+
 if __name__ == "__main__":
     import uvicorn
+    import os
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8080))
+
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=port,
+        log_level="info",
+    )
